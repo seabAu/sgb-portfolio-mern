@@ -1,8 +1,9 @@
 import React from "react";
 import { Form, Button, Input, Modal, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { HideLoading, ReloadData, ShowLoading } from "../../redux/rootSlice";
+import { ReloadData, SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
+import SectionTitle from "../../components/SectionTitle";
 // import { Form, Button, Row, Col } from "react-bootstrap";
 function AdminProjects() {
     const dispatch = useDispatch();
@@ -18,7 +19,7 @@ function AdminProjects() {
             const tempTechnologies = values.technologies?.split(/[\s,]+/) || [];
             values.technologies = tempTechnologies;
             console.log(values);
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             let response;
             if (selectedItemForEdit) {
                 // Update operation
@@ -34,44 +35,44 @@ function AdminProjects() {
                 );
             }
 
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
                 setShowAddEditModal(false);
                 setSelectedItemForEdit(null);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch(ReloadData(true));
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };
 
     const onDelete = async (item) => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             const response = await axios.post("/api/portfolio/delete-project", {
                 _id: item._id,
             });
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch(ReloadData(true));
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };
 
     return (
-        <div>
+        <>
             <div className="flex justify-end">
                 <button
                     className="admin-button bg-primary px-5 py-2 text-white"
@@ -84,39 +85,58 @@ function AdminProjects() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-1 gap-5">
+            <div className="grid-card-container">
                 {projects.map((project) => (
-                    <div className="admin-panel shadow border-2 p-5 flex flex-col gap-5">
-                        <h1 className="text-secondary text-xl font-bold">
-                            {project.title}
-                        </h1>
-                        <hr />
-                        <img
-                            src={project.image}
-                            alt=""
-                            className="h-60 w-80"></img>
-                        <h1 className="">{project.context}</h1>
-                        <hr />
-                        <h1 className="">{project.description}</h1>
-                        <h1 className="">{project.link}</h1>
-                        <h1 className="">
+                    <div className="grid-card">
+                        <div className="grid-card-header">
+                            <h1 className="text-xl font-bold">
+                                {project.title}
+                            </h1>
+                        </div>
+                        <div className="grid-card-body">
+                            <div className="grid-card-image-container">
+                                <img
+                                    src={project.image}
+                                    alt=""
+                                    className="grid-card-image"></img>
+                            </div>
+                            <div className="grid-card-iframe">
+                                <input
+                                    id="link"
+                                    className=""
+                                    type="text"
+                                    value={project.link}></input>
+                            </div>
+                            <div className="grid-card-body-text">
+                                <h1 className="">{project.description}</h1>
+                            </div>
                             Technologies used:{" "}
-                            <div className="py-2 m-0">
+                            <div className="cell-list">
                                 {project.technologies.map((technology) => (
-                                    <h1 className="m-0">• {technology}</h1>
+                                    <div className="cell-list-item">
+                                        <h1 className="cell-list-item-text">
+                                            {
+                                                // JSON.stringify(technology)
+                                                technology.name
+                                            }
+                                        </h1>
+                                    </div>
                                 ))}
                             </div>
-                        </h1>
-                        <div className="flex justify-end gap-5 mt-5 items-end">
+                        </div>
+                        <div className="grid-card-footer">
+                            <a href={project.link} className="button">
+                                See It Here
+                            </a>
                             <button
-                                className="admin-button admin-button-red bg-red-500 text-white rounded-sm"
+                                className="button admin-button admin-button-red"
                                 onClick={() => {
                                     onDelete(project);
                                 }}>
                                 Delete
                             </button>
                             <button
-                                className="admin-button admin-button-primary bg-primary text-white rounded-sm"
+                                className="button admin-button admin-button-primary"
                                 onClick={() => {
                                     setType("edit");
                                     setSelectedItemForEdit(project);
@@ -187,11 +207,60 @@ function AdminProjects() {
                     </Form>
                 </Modal>
             )}
-        </div>
+        </>
     );
 }
 
 export default AdminProjects;
+
+/*
+
+                    <div className="grid-card5">
+                        <h1 className="text-xl font-bold text-white">
+                            {project.title}
+                        </h1>
+                        <hr />
+                        <img
+                            src={project.image}
+                            alt=""
+                            className="h-60 w-80"></img>
+                        <h1 className="">{project.context}</h1>
+                        <hr />
+                        <h1 className="">{project.description}</h1>
+                        <h1 className="">{project.link}</h1>
+                        <input
+                            id="link"
+                            class=""
+                            type="text"
+                            value={project.link}></input>
+                        <h1 className="">
+                            Technologies used:{" "}
+                            <div className="py-2 m-0">
+                                {project.technologies.map((technology) => (
+                                    <h1 className="m-0">• {technology}</h1>
+                                ))}
+                            </div>
+                        </h1>
+                        <div className="flex justify-end gap-5 mt-5 items-end">
+                            <button
+                                className="admin-button admin-button-red bg-red-500 text-white rounded-sm"
+                                onClick={() => {
+                                    onDelete(project);
+                                }}>
+                                Delete
+                            </button>
+                            <button
+                                className="admin-button admin-button-primary bg-primary text-white rounded-sm"
+                                onClick={() => {
+                                    setType("edit");
+                                    setSelectedItemForEdit(project);
+                                    setShowAddEditModal(true);
+                                }}>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                    */
 
 /*
 

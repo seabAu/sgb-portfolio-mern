@@ -2,7 +2,7 @@ import { message } from "antd";
 import axios from "axios";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { HideLoading, ShowLoading } from "../../redux/rootSlice";
+import { SetLoading } from "../../redux/rootSlice";
 
 function Login() {
     const [user, setUser] = React.useState({
@@ -14,22 +14,23 @@ function Login() {
     const dispatch = useDispatch();
     const login = async () => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             const response = await axios.post(
                 "api/portfolio/admin-login",
                 user,
             );
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
                 localStorage.setItem("token", JSON.stringify(response.message));
                 window.location.href = "/admin";
+
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
             message.error(error.message);
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
         }
     };
     return (
@@ -54,12 +55,12 @@ function Login() {
                         value={user.password}
                         placeholder="Password"
                         label="Password"
-                        className="bg-secondary"
+                        className=""
                         onChange={(e) =>
                             setUser({ ...user, password: e.target.value })
                         }></input>
                     <button
-                        className="admin-button px-10 py-2 bg-primary text-white"
+                        className="button"
                         onClick={login}>
                         Submit
                     </button>

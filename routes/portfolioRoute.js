@@ -1,4 +1,5 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
 const {
     Intro,
     About,
@@ -6,13 +7,21 @@ const {
     Project,
     Education,
     Contact,
-    Message
+    Message,
 } = require("../models/portfolioModel");
 
-const User = require( "../models/userModel" );
+const User = require("../models/userModel");
 
 router.get("/get-portfolio-data", async (req, res) => {
     // Pull the data from every collection in the database.
+    // console.log( "PortfolioRoute.js received get-portfolio-data request on:",
+    //     req.headers.host,
+    //     req.socket.localPort,
+    //     req.socket.remotePort,
+    //     req.socket.address,
+    //     req.socket.remoteAddress,
+    //     req.headers["access-control-allow-origin"]
+    // );
     try {
         const intros = await Intro.find();
         const abouts = await About.find();
@@ -21,16 +30,33 @@ router.get("/get-portfolio-data", async (req, res) => {
         const educations = await Education.find();
         const contacts = await Contact.find();
         const messages = await Message.find();
+        // console.log(
+        //     intros,
+        //     abouts,
+        //     experiences,
+        //     projects,
+        //     educations,
+        //     contacts,
+        //     messages,
+        // );
 
-        res.status(200).send({
+        // res.writeHead(200, {
+        //     "Content-Type": "text/plain",
+        //     "Access-Control-Allow-Origin": "*",
+        //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+        // });
+        res.status( 200 ).send(
+            {
             intro: intros[0],
             about: abouts[0],
             experiences: experiences,
             projects: projects,
             educations: educations,
-            contact: contacts[ 0 ],
+            contact: contacts[0],
             messages: messages,
-        });
+            }
+        );
+        // console.log( "test" );
     } catch (error) {
         res.status(500).send(error);
     }
@@ -43,6 +69,12 @@ router.post("/update-intro", async (req, res) => {
             { _id: req.body._id },
             req.body,
             { new: true },
+        );
+        console.log(
+            "router.post(/update-intro): ",
+            req.body,
+            req.headers,
+            res.success,
         );
         // If it works, throw a success message.
         res.status(200).send({
@@ -233,7 +265,6 @@ router.post("/update-education", async (req, res) => {
     }
 });
 
-
 // Update contact info
 router.post("/update-contact", async (req, res) => {
     try {
@@ -253,12 +284,13 @@ router.post("/update-contact", async (req, res) => {
     }
 });
 
-// Send message 
+// Send message
 router.post("/send-message", async (req, res) => {
     try {
+        // console.log("router.post(/send-message): ", req, res);
+        // console.log("router.post(/send-message): ", req.body, req.headers, res.success);
         const message = new Message(req.body);
         await message.save();
-
         // If it works, throw a success message.
         res.status(200).send({
             data: message,
@@ -270,38 +302,50 @@ router.post("/send-message", async (req, res) => {
     }
 });
 
+// Delete message
+router.post("/delete-message", async (req, res) => {
+    try {
+        const message = await Message.findOneAndDelete({
+            _id: req.body._id,
+        });
+
+        // If it works, throw a success message.
+        res.status(200).send({
+            data: message,
+            success: true,
+            message: "Message deleted successfully",
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 // Admin login
-router.post( "/admin-login", async ( req, res ) =>
-{
-    try
-    {
-        const user = await User.findOne( {
+router.post("/admin-login", async (req, res) => {
+    try {
+        const user = await User.findOne({
             username: req.body.username,
             password: req.body.password,
-        } );
+        });
 
-        // Blank out the password so it doesn't get saved in the localstorage token. 
+        // Blank out the password so it doesn't get saved in the localstorage token.
         user.password = "";
-        if ( user )
-        {
-            res.status( 200 ).send( {
+        if (user) {
+            res.status(200).send({
                 data: user,
                 success: true,
                 message: "Logged in successfully",
-            } );
-        }
-        else
-        {
-            res.status( 200 ).send( {
+            });
+        } else {
+            res.status(200).send({
                 data: user,
                 success: false,
-                message: "Invalid username or password."
-            } );
+                message: "Invalid username or password.",
+            });
         }
-    } catch ( error )
-    {
-        res.status( 500 ).send( error );
+    } catch (error) {
+        res.status(500).send(error);
     }
-} );
+});
 
 module.exports = router;

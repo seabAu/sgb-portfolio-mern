@@ -1,8 +1,10 @@
 import React from "react";
 import { Form, Input, Button, Checkbox, Modal, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { HideLoading, ReloadData, ShowLoading } from "../../redux/rootSlice";
+import { ReloadData, SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
+import { cleanArray, isArray, isString } from "../../components/Utilities/Utilities";
+import { arrayIsValid } from "../../components/Utilities/ObjectUtils";
 
 function AdminExperiences() {
     const dispatch = useDispatch();
@@ -14,8 +16,39 @@ function AdminExperiences() {
 
     const onFinish = async (values) => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             let response;
+            // Here's some hacky bullshit to remove the ","'s the form adds to arrays, without removing ", "'s you'll see in normal input.
+            // let duties = selectedItemForEdit.duties;
+            // duties = removeEmpty(
+            //     selectedItemForEdit.duties
+            //         .toString()
+            //         .replaceAll(",", "%^(*&)")
+            //         .replaceAll("%^(*&) ", ", ")
+            //         .replaceAll("%^(*&)", "|")
+            //         .split("|"),
+            // );
+            console.log(
+                "AdminExperience :: values = ",
+                values,
+                selectedItemForEdit,
+                removeEmpty(
+                    values.duties
+                        .toString()
+                        .replaceAll(",", "%^(*&)")
+                        .replaceAll("%^(*&) ", ", ")
+                        .replaceAll("%^(*&)", "|")
+                        .split("|"),
+                ),
+                cleanArray(
+                    values.duties
+                        .toString()
+                        .replaceAll(",", "%^(*&)")
+                        .replaceAll("%^(*&) ", ", ")
+                        .replaceAll("%^(*&)", "|")
+                        .split("|"),
+                )
+            );
             if (selectedItemForEdit) {
                 // Update operation
                 response = await axios.post(
@@ -23,57 +56,123 @@ function AdminExperiences() {
                     {
                         ...values,
                         _id: selectedItemForEdit._id,
+                        duties: cleanArray(
+                            values.duties
+                                .toString()
+                                .replaceAll(",", "%^(*&)")
+                                .replaceAll("%^(*&) ", ", ")
+                                .replaceAll("%^(*&)", "|")
+                                .split("|"),
+                        ),
                     },
                 );
             } else {
                 // Add operation
                 response = await axios.post(
                     "/api/portfolio/add-experience",
-                    values,
+                    // values
+                    {
+                        ...values,
+                        duties: cleanArray(
+                            values.duties
+                                .toString()
+                                .replaceAll(",", "%^(*&)")
+                                .replaceAll("%^(*&) ", ", ")
+                                .replaceAll("%^(*&)", "|")
+                                .split("|"),
+                        ),
+                        // duties: parseTextToArray(selectedItemForEdit.duties, [
+                        //     "|",
+                        // ]),
+                    },
                 );
             }
 
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
                 setShowAddEditModal(false);
                 setSelectedItemForEdit(null);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch(ReloadData(true));
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };
 
     const onDelete = async (item) => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             const response = await axios.post(
                 "/api/portfolio/delete-experience",
                 {
                     _id: item._id,
                 },
             );
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch(ReloadData(true));
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };
+    const removeEmpty = (arr) => {
+        return isArray(arr)
+            ? arrayIsValid(arr)
+                ? arr.filter(
+                      (a) =>
+                          a !== null &&
+                          a !== undefined &&
+                          a.toString() !== "" &&
+                          a !== "" &&
+                          a !== " ",
+                  )
+                : arr
+            : arr;
+    };
+
+    const parseTextToArray = (text, split) => {
+        console.log(
+            "parseText2Array :: ",
+            text,
+            split,
+            text.toString(),
+            text.toString().split(split),
+        );
+        if (!isString(text)) {
+            text = text.toString();
+        }
+        if (split) {
+            // if ( typeof split === "string" ) { return text.split( split ); }
+            if (isString(split)) {
+                return text.toString().split(split);
+            } else if (Array.isArray(split)) {
+                if (split[0] !== undefined) {
+                    let temp = text;
+                    split.forEach((separator, index) => {
+                        if (separator) {
+                            temp = temp.replaceAll(separator, "******");
+                        }
+                    });
+                    return temp.split("******");
+                }
+            }
+        }
+        return [text];
+    };
 
     return (
-        <div>
+        <>
             <div className="flex justify-end">
                 <button
                     className="admin-button bg-primary px-5 py-2 text-white"
@@ -89,7 +188,7 @@ function AdminExperiences() {
             <div className="grid grid-cols-4 sm:grid-cols-1 gap-5">
                 {experiences.map((experience) => (
                     <div className="admin-panel shadow border-2 p-5 flex flex-col gap-5">
-                        <h1 className="text-secondary text-xl font-bold">
+                        <h1 className="text-white text-xl font-bold">
                             {experience.period}
                         </h1>
                         <hr />
@@ -102,7 +201,9 @@ function AdminExperiences() {
                             Duties:{" "}
                             <div className="py-2 m-0">
                                 {experience.duties.map((duty) => (
-                                    <h1 className="m-0">• {duty}</h1>
+                                    <h1 className="m-0">
+                                        <br />• {duty}
+                                    </h1>
                                 ))}
                             </div>
                         </h1>
@@ -159,7 +260,16 @@ function AdminExperiences() {
                             <Input placeholder="Location"></Input>
                         </Form.Item>
                         <Form.Item name="duties" label="Duties">
-                            <Input placeholder="Duties"></Input>
+                            <textarea
+                                placeholder="Duties"
+                                name="duties"
+                                label="Duties"
+                                // defaultValue={
+                                //     selectedItemForEdit
+                                //         ? selectedItemForEdit.duties
+                                //         : ""
+                                // }
+                            ></textarea>
                         </Form.Item>
                         <Form.Item name="description" label="Description">
                             <Input placeholder="Description"></Input>
@@ -181,7 +291,7 @@ function AdminExperiences() {
                     </Form>
                 </Modal>
             )}
-        </div>
+        </>
     );
 }
 

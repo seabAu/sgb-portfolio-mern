@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Input, Button, Checkbox, Modal, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { HideLoading, ReloadData, ShowLoading } from "../../redux/rootSlice";
+import { ReloadData, SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
 
 function AdminEducations() {
@@ -17,7 +17,7 @@ function AdminEducations() {
             const tempSubjects = values.subjects?.split(/[\s,]+/) || [];
             values.subjects = tempSubjects;
             console.log(values);
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             let response;
             if (selectedItemForEdit) {
                 // Update operation
@@ -33,39 +33,39 @@ function AdminEducations() {
                 );
             }
 
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
                 setShowAddEditModal(false);
                 setSelectedItemForEdit(null);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch( ReloadData( true ) );
                 // form.resetFields();
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };
 
     const onDelete = async (item) => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             const response = await axios.post("/api/portfolio/delete-education", {
                 _id: item._id,
             });
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
-                dispatch(HideLoading());
+                dispatch(SetLoading(false));
                 dispatch(ReloadData(true));
             } else {
                 message.error(response.data.message);
             }
         } catch (error) {
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             message.error(error.message);
         }
     };

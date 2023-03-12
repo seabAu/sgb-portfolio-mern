@@ -1,15 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-
 import store from "./redux/store";
 import { Provider } from "react-redux";
 
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+
 // Import ant.design styling.
 // import 'antd/dist/antd.min.css';
-import "antd/dist/reset.css";
+import "./index.css";
+import "./utilities.css";
+// import "antd/dist/reset.css";
+// import "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

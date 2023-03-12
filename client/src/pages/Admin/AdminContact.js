@@ -1,26 +1,26 @@
 import React from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { ShowLoading, HideLoading } from "../../redux/rootSlice";
+import { SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
 
 function AdminContact() {
     const dispatch = useDispatch();
     // Get the current values.
-    const { loading, portfolioData } = useSelector((state) => state.root);
+    const { portfolioData } = useSelector((state) => state.root);
 
     // Destructure data.
     // const { intros } = portfolioData;
     // const { firstName, lastName, welcomeText, description, caption } = intros[ 0 ];
-    const { contact } = portfolioData;
+    // const { contact } = portfolioData;
     const onFinish = async (values) => {
         try {
-            dispatch(ShowLoading());
+            dispatch(SetLoading(true));
             const response = await axios.post("/api/portfolio/update-contact", {
                 ...values,
                 _id: portfolioData.contact._id,
             });
-            dispatch(HideLoading());
+            dispatch(SetLoading(false));
             if (response.data.success) {
                 message.success(response.data.message);
             } else {
@@ -49,10 +49,10 @@ function AdminContact() {
                     <input type="text" placeholder="Phone Number" />
                 </Form.Item>
                 <Form.Item name="age" label="Age">
-                    <input placeholder="Age" />
+                    <input type="text" placeholder="Age" />
                 </Form.Item>
                 <Form.Item name="location" label="Location">
-                    <input placeholder="Location" />
+                    <input type="text" placeholder="Location" />
                 </Form.Item>
                 <div className="flex justify-end w-full">
                     <button

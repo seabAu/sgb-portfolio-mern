@@ -1,5 +1,34 @@
 import React from "react";
 
+function Icons() {
+  return (
+      <ul className="social-icons">
+          <li className="">
+              <a href="mailto:sean.george.brown@gmail.com">
+                  {" "}
+                  <i className="social-icon ri-mail-line"></i>
+              </a>
+          </li>
+          <li className="">
+              <a href="https://www.linkedin.com/in/sean-brown-116b4b79/">
+                  {" "}
+                  <i className="social-icon ri-linkedin-box-line"></i>
+              </a>
+          </li>
+          <li className="">
+              <a href="https://github.com/seabAu">
+                  {" "}
+                  <i className="social-icon ri-github-line"></i>
+              </a>
+          </li>
+      </ul>
+  );
+}
+
+export default Icons
+
+
+/*
 function SocialIcons() {
     return (
         <div className="fixed left-0 bottom-0 px-10 sm:static">
@@ -25,3 +54,4 @@ function SocialIcons() {
 }
 
 export default SocialIcons;
+*/

@@ -9,7 +9,10 @@ import AdminContact from "./AdminContact";
 import { useSelector } from "react-redux";
 
 // Ant components
-import { Tabs } from 'antd';
+// import { Tabs } from "antd";
+import Tabs from "../../components/Tabs/Tabs";
+import AdminMessages from "./AdminMessages";
+import SectionTitle from "../../components/SectionTitle";
 // import { TabsProps } from "antd";
 // const { TabPane } = Tabs;
 
@@ -48,7 +51,7 @@ function Admin() {
         },
         {
             key: "5",
-            label: `Courses`,
+            label: `Education`,
             children: <AdminEducations />,
         },
         {
@@ -56,35 +59,59 @@ function Admin() {
             label: `Contact`,
             children: <AdminContact />,
         },
+        {
+            key: "7",
+            label: `Messages`,
+            children: <AdminMessages />,
+        },
     ];
 
     return (
-        <div className="">
+        <div className="page-container">
             <Header></Header>
-            <div className="admin-panel-content-container flex gap-10 items-center justify-between px-5 pt-2">
-                <div className="flex gap-10 items-center">
-                    <h1 className="admin-panel-content-title text-3xl px-2 mt-5 text-primary">
-                        Portfolio Admin Panel
-                    </h1>
-                    <div className="w-60 h-[1px] bg-tertiary"></div>
-                </div>
-                <button className="admin-button text-primary" onClick={ () =>
-                {
-                    localStorage.removeItem( "token" );
-                    window.location.href = "/admin-login";
-                }}>Log Out</button>
+            <div className="admin-page-content-header">
+                <SectionTitle
+                    title="Portfolio Admin Panel"
+                    scale="1"></SectionTitle>
             </div>
             {portfolioData && (
-                <div className="admin-tabs-bar mt-5 px-5 pb-10">
-                    <Tabs
-                        defaultActiveKey="1"
-                        items={items}
-                        tabPosition={"left"}
-                        type="card"
-                        size={"small"}
-                        style={{ margin: 0 }}
-                        // onChange={onChange}
-                    />
+                <div className="admin-page-content">
+                    <div className="admin-tabs-bar">
+                        <Tabs
+                            defaultActiveKey="2"
+                            items={items}
+                            type="left"
+                            centered={true}
+                            padContent={true}
+                            fillArea={true}
+                            roundedNav={false}
+                            contentBoxShadow={true}
+                            navBoxShadow={true}
+                            // onChange={onChange}
+                        >
+                            <div className="tab-item" label="Intro" key="1">
+                                <AdminIntro />
+                            </div>
+                            <div className="tab-item" label="About" key="2">
+                                <AdminAbout />
+                            </div>
+                            <div
+                                className="tab-item"
+                                label="Experiences"
+                                key="3">
+                                <AdminExperiences />
+                            </div>
+                            <div className="tab-item" label="Projects" key="4">
+                                <AdminProjects />
+                            </div>
+                            <div className="tab-item" label="Education" key="5">
+                                <AdminEducations />
+                            </div>
+                            <div className="tab-item" label="Messages" key="6">
+                                <AdminMessages />
+                            </div>
+                        </Tabs>
+                    </div>
                 </div>
             )}
         </div>
@@ -92,3 +119,32 @@ function Admin() {
 }
 
 export default Admin;
+
+/*
+
+    return (
+        <div className="">
+            <Header></Header>
+            <div className="admin-page-content-header">
+                    <SectionTitle
+                        title="Portfolio Admin Panel"
+                        scale="1"></SectionTitle>
+            </div>
+            {portfolioData && (
+                <div className="admin-page-content">
+                    <div className="admin-tabs-bar">
+                        <Tabs
+                            defaultActiveKey="1"
+                            items={items}
+                            tabPosition={"left"}
+                            type="card"
+                            size={"small"}
+                            style={{ margin: 0 }}
+                            // onChange={onChange}
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+*/

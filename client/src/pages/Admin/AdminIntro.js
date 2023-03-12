@@ -1,13 +1,13 @@
 import React from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { ShowLoading, HideLoading } from "../../redux/rootSlice";
+import { SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
 
 function AdminIntro() {
     const dispatch = useDispatch();
     // Get the current values.
-    const { loading, portfolioData } = useSelector((state) => state.root);
+    const { portfolioData } = useSelector((state) => state.root);
 
     // Destructure data.
     // const { intros } = portfolioData;
@@ -15,13 +15,13 @@ function AdminIntro() {
 
     const onFinish = async (values) => {
         try {
-            dispatch( ShowLoading() );
+            dispatch( SetLoading(true) );
             const response = await axios.post( "/api/portfolio/update-intro",
                 {
                     ...values,
                     _id: portfolioData.intro._id,
                 } );
-            dispatch( HideLoading() );
+            dispatch( SetLoading(false) );
             if ( response.data.success )
             {
                 message.success(response.data.message);
@@ -35,7 +35,7 @@ function AdminIntro() {
         }
     };
     return (
-        <div>
+        <>
             <Form
                 onFinish={onFinish}
                 layout="vertical"
@@ -61,7 +61,7 @@ function AdminIntro() {
                     </button>
                 </div>
             </Form>
-        </div>
+        </>
     );
 }
 

@@ -11,31 +11,56 @@ function Header() {
                             process.env.PUBLIC_URL +
                             "/assets/img/portfolio_icon.jpg"
                         }
-                        alt="User Icon"></img>
+                        alt="User Icon"
+                        onClick={() => {
+                            if (window.location.href === "/") {
+                                console.log(localStorage.getItem("token"));
+                                if (!localStorage.getItem("token")) {
+                                    window.location.href = "/admin-login";
+                                } else {
+                                    window.location.href = "/admin";
+                                }
+                            } else {
+                                window.location.href = "/";
+                            }
+                        }}></img>
                 </div>
                 <div className="page-header-title-container">
-                    <div className="page-header-title p-5 flex flex-row justify-left items-center align-middle text-4xl font-semibold">
+                    <div className="page-header-title">
                         <h1 className="text-textColor ">S</h1>
                         <h1 className="text-highlightColor ">G</h1>
                         <h1 className="text-textColor ">B</h1>
                     </div>
                 </div>
             </div>
-            <div className="page-header-center">
-                <a href="#" className="button portfolio-button">
-                    <h1 className="button-text">Download Resume (PDF)</h1>
-                    <i className="pdf-icon"></i>
-                </a>
-            </div>
+            <div className="page-header-center"></div>
             <div className="page-header-right">
-                <div className="page-header-nav-container">
-                    <div>
+                <div className="page-header-nav-container flex-spread-box">
+                    <div className="flex-row">
+                        <button href="#" className="button">
+                            <h1 className="button-text">
+                                Download Resume (PDF)
+                            </h1>
+                            <i className="pdf-icon"></i>
+                        </button>
+
                         <button
-                            className="button admin-button text-highlightColor"
-                            onClick={() => {
-                                window.location.href = "/admin-login";
+                            className="button"
+                            onClick={ () =>
+                            {
+                                if ( localStorage.getItem( "token" ) == null )
+                                {
+                                    // NOT logged in, send user to the login screen.
+                                    window.location.href = "/admin-login";
+                                }
+                                else
+                                {
+                                    // IS logged in, return user to the front page.
+                                    localStorage.removeItem("token");
+                                    window.location.href = "/admin-login";
+                                }
                             }}>
-                            Log In
+                            {localStorage.getItem("token") == null ? 'Log In' : 'Log Out'}
                         </button>
                     </div>
                 </div>
@@ -45,3 +70,12 @@ function Header() {
 }
 
 export default Header;
+
+/*
+<button
+    className="button text-highlightColor"
+    onClick={() => {
+        window.location.href = "/admin-login";
+    }}>
+    Log In
+</button>*/
