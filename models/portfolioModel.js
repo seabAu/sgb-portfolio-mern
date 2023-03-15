@@ -181,6 +181,14 @@ const experienceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    startdate: {
+        type: String,
+        required: true,
+    },
+    enddate: {
+        type: String,
+        required: true,
+    },
     company: {
         type: String,
         required: true,
@@ -274,6 +282,15 @@ projectSchema.plugin(require("mongoose-autopopulate"));
 
 
 const educationSchema = new mongoose.Schema({
+    index: {
+        type: Number,
+    },
+    showIndex: {
+        type: Number,
+    },
+    enabled: {
+        type: Boolean,
+    },
     degree: {
         type: String,
         required: true,

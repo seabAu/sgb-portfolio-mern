@@ -2,7 +2,7 @@ import React, { Children, Component, useEffect } from "react";
 import PropTypes from "prop-types";
 import TabNav from "./TabNav";
 import styles from "./Tabs.module.css";
-import { arrayIsValid, has } from "../Utilities/ObjectUtils";
+import { has } from "../Utilities/AO";
 
 const TabContent = (props) => {
     const {

@@ -3,8 +3,9 @@ import { Form, Input, Button, Checkbox, Modal, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { ReloadData, SetLoading } from "../../redux/rootSlice";
 import axios from "axios";
-import { cleanArray, isArray, isString } from "../../components/Utilities/Utilities";
-import { arrayIsValid } from "../../components/Utilities/ObjectUtils";
+import { isArray, isString } from "../../components/Utilities/Val";
+import { cleanArray } from "../../components/Utilities/AO";
+import * as util from "../../components/Utilities/index.js";
 
 function AdminExperiences() {
     const dispatch = useDispatch();
@@ -126,9 +127,10 @@ function AdminExperiences() {
             message.error(error.message);
         }
     };
+    // Accepts an array and filters out empty or invalid values. 
     const removeEmpty = (arr) => {
         return isArray(arr)
-            ? arrayIsValid(arr)
+            ? util.val.isValidArray(arr)
                 ? arr.filter(
                       (a) =>
                           a !== null &&
@@ -141,6 +143,8 @@ function AdminExperiences() {
             : arr;
     };
 
+    // @Accepts a string and a split value, containing either a single string or an array of strings as separators. 
+    // @Returns an array divided by the split value(s).
     const parseTextToArray = (text, split) => {
         console.log(
             "parseText2Array :: ",

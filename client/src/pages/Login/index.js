@@ -16,7 +16,7 @@ function Login() {
         try {
             dispatch(SetLoading(true));
             const response = await axios.post(
-                "api/portfolio/admin-login",
+                "api/portfolio/login",
                 user,
             );
             dispatch(SetLoading(false));

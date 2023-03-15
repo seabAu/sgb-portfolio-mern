@@ -1,5 +1,6 @@
 import React from "react";
 import Spinner from "./Spinner";
+import "./loader.css";
 
 function Loader() {
     return (

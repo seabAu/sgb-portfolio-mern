@@ -35,7 +35,7 @@ function Contact() {
 
     return (
         <>
-            <SectionTitle title="Say Hello"></SectionTitle>
+            <SectionTitle title="Get In Touch"></SectionTitle>
             <div className="flex flex-col items-center justify-center w-[100%]">
                 <div className="contact-form ">
                     <Form layout="vertical" onFinish={sendMessage}>

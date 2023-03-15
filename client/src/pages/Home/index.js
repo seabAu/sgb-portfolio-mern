@@ -12,7 +12,7 @@ import Education from "./Education";
 import Contact from "./Contact";
 // import { Tabs } from "antd";
 import Tabs from "../../components/Tabs/Tabs";
-import { arrayIsValid, has } from "../../components/Utilities/ObjectUtils";
+import { arrayIsValid, has } from "../../components/Utilities/AO";
 
 // Import UI components
 // import 'bootstrap/dist/css/bootstrap.css';

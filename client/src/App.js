@@ -15,7 +15,7 @@ import {
     SetPortfolioData,
     ReloadData,
 } from "./redux/rootSlice";
-import Login from "./pages/Admin/Login";
+import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 
 function App() {
@@ -86,7 +86,7 @@ function App() {
                 <Route path="/" element={<Landing />} />
                 <Route path="/portfolio" element={<Home />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/admin-login" element={<Login />} />
+                <Route path="/login" element={<Login />} />
             </Routes>{" "}
         </BrowserRouter>
     );

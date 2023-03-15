@@ -1,14 +1,15 @@
 import { array } from "prop-types";
 import React from "react";
 
-import { arrayIsValid, has } from "./ObjectUtils";
+// import { isValidArray, has } from "./AO";
+import * as util from "./index.js";
 
 export const points2geojsonFeatures = (input) => {
     // Input MUST be an array containing simple coordinate-pair objects:
     // { lat: #, lng: # }
     let points = [];
     // Construct a points list in JSON out of the provided coordinates.
-    if (arrayIsValid(input, true)) {
+    if (util.val.isValidArray(input, true)) {
         // if (input.length > 0) {
         // if (Array.isArray(input)) {
         input.forEach((point, index) => {
@@ -139,7 +140,7 @@ export const data2geojsonfeatures = (input) => {
     // { lat: #, lng: # }
     let features = [];
     // Construct a points list in JSON out of the provided coordinates.
-    if (arrayIsValid(input, true)) {
+    if (util.val.isValidArray(input, true)) {
         // if (input.length > 0) {
         // if (Array.isArray(input)) {
         input.forEach((entry, index) => {
@@ -157,7 +158,7 @@ export const data2geojsonfeatures = (input) => {
                         }
                     }
                 */
-            if (has(entry, "geometry")) {
+            if (util.ao.has(entry, "geometry")) {
                 // Good to go, it's a valid entry.
                 let type = entry.geometry.type;
                 let coordinates = entry.geometry.coordinates;
@@ -170,7 +171,7 @@ export const data2geojsonfeatures = (input) => {
                     // Coordinates will be an array of objects.
                     // Convert the array of point-object coordinates into an array of point-array coordinates.
                     let coordinatesArray;
-                    if (arrayIsValid(coordinates, true)) {
+                    if (util.val.isValidArray(coordinates, true)) {
                         coordinatesArray = coordinates.map((point, index) => {
                             return pointObj2pointArray(point);
                         });
@@ -217,7 +218,7 @@ export const isNearby = (
         }
     }
     // console.log("isNearby :: values are valid :: ", point1, point2, threshold);
-    if (arrayIsValid(point1, false) && arrayIsValid(point2, false)) {
+    if (util.val.isValidArray(point1, false) && util.val.isValidArray(point2, false)) {
         console.log(
             "MapPoly.js :: isNearby() :: Checking: ",
             point1,
@@ -238,7 +239,7 @@ export const isNearby = (
 
 // Checks if a point-pair array's values are close any in an array of point-pair arrays.
 export const isNearbyAny = (testpoint, points, threshold = 0.001) => {
-    if (arrayIsValid(points, true)) {
+    if (util.val.isValidArray(points, true)) {
         console.log("isNearbyAny :: ", testpoint, points, threshold);
         points.forEach((point) => {
             if (point) {
@@ -265,11 +266,11 @@ export const isGeoObj = ( input ) =>
         }
     }
     */
-    if ( has( input, "geometry" ) )
+    if ( util.ao.has( input, "geometry" ) )
     {
-        if ( has( input.geometry, "coordinates" ) )
+        if ( util.ao.has( input.geometry, "coordinates" ) )
         {
-            if ( arrayIsValid( input.geometry.coordinates, true ) )
+            if ( util.val.isValidArray( input.geometry.coordinates, true ) )
             {
                 return true;
             }
@@ -295,7 +296,7 @@ export const isGeoArray = (input) => {
             [coordinates],
         ]
     */
-    return arrayIsValid( input, true ) ? (input === input.filter((point) => isPointArray(point))) : false;
+    return util.val.isValidArray( input, true ) ? (input === input.filter((point) => isPointArray(point))) : false;
 };
 export const geoArray2geoObj = (input) => {
     if (isGeoArray(input)) {
@@ -330,7 +331,7 @@ export const geoArray2geoObj = (input) => {
 export const geoObjArray2geoArrayArray = ( input ) =>
 {
     console.log("GeoUtilities :: geoObjArray2geoArrayArray :: ", input);
-    if ( arrayIsValid( input, true ) )
+    if ( util.val.isValidArray( input, true ) )
     {
         let result = input.map( ( geoObj, index ) =>
         {
@@ -484,14 +485,14 @@ export const geoObjArray2geoArrayArray = ( input ) =>
 ]
 */
 
-export const isPointObj = (input) => has(input, "lat") && has(input, "lng");
+export const isPointObj = (input) => util.ao.has(input, "lat") && util.ao.has(input, "lng");
 export const pointObj2pointArray = (point) => isPointObj(point) ? [point.lat, point.lng] : [];
 
-export const isPointArray = (input) => arrayIsValid(input, false) ? input.length >= 2 : false;
+export const isPointArray = (input) => util.val.isValidArray(input, false) ? input.length >= 2 : false;
 export const pointArray2PointObj = (point) => isPointArray(point) ? { lat: point[0], lng: point[1] } : [];
 
 export const filterNearby = (pointsArray, filterPoint) => {
-    if (arrayIsValid(pointsArray, true)) {
+    if (util.val.isValidArray(pointsArray, true)) {
         return pointsArray.filter((point) => {
             return !isNearby(point, filterPoint, 0.001);
         });

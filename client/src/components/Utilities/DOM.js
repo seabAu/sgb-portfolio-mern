@@ -1,7 +1,7 @@
 // A set of utility functions centered around updating and managing the site DOM.
 import React from "react";
-import { arrayIsValid, cleanInvalid } from "./ObjectUtils";
-import { isArray, isObject } from "./Utilities";
+import { cleanInvalid } from "./AO";
+import { isValidArray, isArray, isObject } from "./Val";
 
 export function setElementValueById ( id, value )
 {
@@ -185,7 +185,7 @@ export const objArrayToList = (input) => {
 // Turns an object array into an unordered list, with recursion.
 export const arrayToList = (input) => {
     // console.log("objArrayToList :: input = ", input);
-    if (isArray(input) && arrayIsValid(input)) {
+    if (isArray(input) && isValidArray(input)) {
         return (
             <ul className="obj-list">
                 { input.map( ( element, arrayIndex ) =>

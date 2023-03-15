@@ -47,6 +47,171 @@ function ObjMap ( { object, elementWrap } )
 
 export default ObjMap;
 
+/*
+    const weHaveHasAtHome = (input, search) => {
+        let src = [
+            "weHaveHasAtHome( [", util.val.isObject(input) ? Object.keys(input) : [input], "], [", search, "] )", ].join("");
+        console.log(`${src} called`);
+        // Trying a simpler method - get all keys of input, and use array.includes.
+        if (util.val.isArray(search)) {
+            // console.log(src, " :: search is array :: ", search);
+            if (util.val.isValidArray(search, true)) {
+                let results = [];
+                console.log(src, " :: search is valid array :: ", search);
+                search.every((str) => {
+                    if (util.val.isString(str)) {
+                        let result = weHaveHasAtHome(input, str);
+                        results.push(result);
+                        if (result === false) {
+                            console.log(
+                                src, " :: search is valid array :: weHaveHasAtHome( ", input, ", ", str, " ) returned FALSE. :: ", result, );
+                            return false;
+                        }
+                        console.log(
+                            src, " :: search is valid array :: weHaveHasAtHome( ", input, ", ", str, " ) returned TRUE :: ", result, );
+                    }
+                    return true;
+                });
+                // If we get here yadda yadda send true
+                console.log(
+                    src, " :: search = ", search, ", input = ", input, " :: after all athome tests for this search term. Results = ", results, );
+                // return true;
+                if (results.includes(false)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            console.log(src, " :: search is string :: ", search);
+            if (util.val.isObject(input)) {
+                console.log(
+                    src, " :: input is object :: ", input, search, Object.keys(input), Object.keys(input).includes(search), );
+                // return Object.keys(input).includes(search);
+                return input ? hasOwnProperty.call(input, search) : false;
+                // if ( !Object.keys( input ).includes( search ) ) { return false; }
+                // return true;
+            } else if (util.val.isArray(input)) {
+                let results = [];
+                console.log(
+                    src, " :: input is array :: ", input, ", search is object :: ", search, );
+                if (util.val.isValidArray(input)) {
+                    // console.log(src, " :: input is valid array :: ", input);
+                    input.every((obj) => {
+                        let result;
+                        // console.log(src, " :: input loop :: obj = ", obj);
+                        if (util.val.isObject(obj)) {
+                            // console.log(
+                            //     src, " :: input loop :: obj is actually an obj yuay = ", //     obj, //     ", hasathome test (", obj, ", ", search, ") = ", //     weHaveHasAtHome(obj, search), // );
+                            result = weHaveHasAtHome(obj, search);
+                            results.push(result);
+                            if (result === false) {
+                                console.log(
+                                    src, " :: search = ", search, ", input obj = ", obj, " :: after athome test, hasathome test (", obj, ", ", search, ") has returned ", result, );
+                                return false;
+                            }
+                            console.log(
+                                src, " :: search = ", search, ", input obj = ", obj, " :: after athome test, hasathome test (", obj, ", ", search, ") has not returned. :: ", result, );
+                        }
+                        return true;
+                    });
+                    // If we get here yadda yadda send true
+                    console.log(
+                        src, " :: search = ", search, ", input = ", input, " :: after all athome tests for this search term. Results = ", results, );
+                    // return true;
+                    if (results.includes(false)) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+
+    const has2ElectricBoogaloo = (input, search) => {
+        let src = [
+            "has2ElectricBoogaloo( [", util.val.isObject(input) ? Object.keys(input) : [input], "], [", search, "] )", ].join("");
+        console.log(`${src} called`);
+        // Trying a simpler method - get all keys of input, and use array.includes.
+        if (util.val.isArray(search)) {
+            // console.log(src, " :: search is array :: ", search);
+            if (util.val.isValidArray(search, true)) {
+                console.log(src, " :: search is valid array :: ", search);
+                let results = search.every((str) => {
+                    if (util.val.isString(str)) {
+                        let result = has2ElectricBoogaloo(input, str);
+                        results.push(result);
+                        if (result === false) {
+                            console.log(
+                                src, " :: search is valid array :: has2ElectricBoogaloo( ", input, ", ", str, " ) returned FALSE. :: ", result, );
+                            return false;
+                        }
+                        console.log(
+                            src, " :: search is valid array :: has2ElectricBoogaloo( ", input, ", ", str, " ) returned TRUE :: ", result, );
+                    }
+                    return true;
+                });
+                // If we get here yadda yadda send true
+                console.log(
+                    src, " :: search = ", search, ", input = ", input, " :: after all athome tests for this search term. Results = ", results, );
+                // return true;
+                if (results.includes(false)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            console.log(src, " :: search is string :: ", search);
+            if (util.val.isObject(input)) {
+                console.log(
+                    src, " :: input is object :: ", input, search, Object.keys(input), Object.keys(input).includes(search), );
+                // return Object.keys(input).includes(search);
+                return input ? hasOwnProperty.call(input, search) : false;
+                // if ( !Object.keys( input ).includes( search ) ) { return false; }
+                // return true;
+            } else if (util.val.isArray(input)) {
+                console.log(
+                    src, " :: input is array :: ", input, ", search is object :: ", search, );
+                if (util.val.isValidArray(input)) {
+                    // console.log(src, " :: input is valid array :: ", input);
+                    let results = input.every((obj) => {
+                        let result;
+                        // console.log(src, " :: input loop :: obj = ", obj);
+                        if (util.val.isObject(obj)) {
+                            // console.log(
+                            //     src, " :: input loop :: obj is actually an obj yuay = ", //     obj, //     ", hasathome test (", obj, ", ", search, ") = ", //     weHaveHasAtHome(obj, search), // );
+                            result = has2ElectricBoogaloo(obj, search);
+                            results.push(result);
+                            if (result === false) {
+                                console.log(
+                                    src, " :: search = ", search, ", input obj = ", obj, " :: after athome test, hasathome test (", obj, ", ", search, ") has returned ", result, );
+                                return false;
+                            }
+                            console.log(
+                                src, " :: search = ", search, ", input obj = ", obj, " :: after athome test, hasathome test (", obj, ", ", search, ") has not returned. :: ", result, );
+                        }
+                        return true;
+                    });
+                    // If we get here yadda yadda send true
+                    console.log(
+                        src, " :: search = ", search, ", input = ", input, " :: after all athome tests for this search term. Results = ", results, );
+                    // return true;
+                    if (results.includes(false)) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+
+*/
+
 /* // Sequential fetch junk pile from Dashboard.js.
 
     // Example POST method implementation:

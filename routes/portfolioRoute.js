@@ -321,7 +321,7 @@ router.post("/delete-message", async (req, res) => {
 });
 
 // Admin login
-router.post("/admin-login", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({
             username: req.body.username,

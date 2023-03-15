@@ -1,8 +1,10 @@
 import React, { Children, Component, useEffect } from "react";
 import PropTypes from "prop-types";
 import TabNav from "./TabNav";
+import { isValidArray } from "../Utilities/Val";
+import { has } from "../Utilities/AO";
+import "./tabs.css";
 // import styles from "./Tabs.module.css";
-import { arrayIsValid, has } from "../Utilities/ObjectUtils";
 
 const Tabs = ( props ) =>
 {
@@ -21,11 +23,15 @@ const Tabs = ( props ) =>
 
 
     const itemsToTabs = (input) => {
-        if (arrayIsValid(input, true)) {
+        if (isValidArray(input, true)) {
             return input.map((item, index) => {
-                if ( has( item, "label" ) && has( item, "children" ) )
-                {
-                    console.log( "itemsToTabs :: ", item, item.label, item.children );
+                if (has(item, "label") && has(item, "children")) {
+                    console.log(
+                        "itemsToTabs :: ",
+                        item,
+                        item.label,
+                        item.children,
+                    );
                     return (
                         <div
                             className="tabs-item"
@@ -42,8 +48,12 @@ const Tabs = ( props ) =>
     };
 
 
-    const [ tabChildren, setTabChildren ] = React.useState(
-        children ? children : (arrayIsValid(items, true) ? (itemsToTabs(items)):([]))
+    const [tabChildren, setTabChildren] = React.useState(
+        children
+            ? children
+            : isValidArray(items, true)
+            ? itemsToTabs(items)
+            : [],
     );
     const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
     const onClickSetActiveTab = (index) => {

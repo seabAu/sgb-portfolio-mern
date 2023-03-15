@@ -1,4 +1,5 @@
 import React from "react";
+import "./loader.css";
 function Spinner(props) {
     const {
         padding = 0,

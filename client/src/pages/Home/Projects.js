@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import SectionTitle from "../../components/SectionTitle";
-import { arrayIsValid } from "../../components/Utilities/ObjectUtils";
-import { isArray, isObject } from "../../components/Utilities/Utilities";
-import { has } from "../../components/Utilities/ObjectUtils";
+import CellList from "../../components/Cell/CellList";
+import { isValidArray } from "../../components/Utilities/Val";
+import { has } from "../../components/Utilities/AO";
 // import { projects } from "../../resources/projects";
 // Implement skills filter
 // Implement projects grid
@@ -15,11 +15,12 @@ function Projects() {
     const { projects, about } = portfolioData;
     const [technologies, setTechnologies] = useState([]);
     const [technologyFilter, setTechnologyFilter] = useState([]);
+    const [technologyFilterOptions, setTechnologyFilterOptions] = useState([]);
     // const { skills } = about; // = abouts[0];
 
     useEffect(() => {
         // On load, get all technologies used, for the filters. Doing it other ways results in an infinite loop??
-        if (arrayIsValid(projects)) {
+        if (isValidArray(projects)) {
             // Case of being given all projects.
             let techs = [];
             let technames = [];
@@ -39,7 +40,10 @@ function Projects() {
                     }
                 }
             });
-            setTechnologies(techs);
+            setTechnologies( techs );
+            setTechnologyFilterOptions(
+                techs.map((tech) => (has(tech, "name") ? tech.name : "")),
+            );
         }
     }, []);
 
@@ -57,6 +61,184 @@ function Projects() {
         )
     });
 
+    const getProjects = (data) => {
+        // console.log(
+        //     "Projects.JS :: getProjects :: Data = ",
+        //     data,
+        //     portfolioData,
+        // );
+        if ( isValidArray( data, true ) )
+        {
+            let datamap = data.map((item, itemIndex) => {
+                // For each project
+                // console.log(
+                //     "Projects.JS :: getProjects :: mapping each project :: ",
+                //     item,
+                //     itemIndex,
+                // );
+                if ( technologyFilter.length > 0 )
+                {
+                    // Check if this project has any technologies listed in the filter list.
+                    if (has(item, "technologies")) {
+                        let techs = item.technologies;
+                        // Get a list of tech names.
+                        let technames = techs.map((tech) =>
+                            has(tech, "name") ? tech.name : "",
+                        );
+                        let match = false;
+                        technames.forEach( ( tech ) =>
+                        {
+                            if ( technologyFilter.includes( tech ) )
+                            {
+                                match = true;
+                            }
+                        } )
+                        if ( match === true )
+                        {
+                            return "";
+                        }
+                    }
+                }
+                // Else proceed like normal.
+                return (
+                    <div
+                        className="grid-card text-white shadow "
+                        id={item._id === "" ? "" : item._id}>
+                        <div className="grid-card-header">
+                            <h1 className="text-xl font-bold">{item.title}</h1>
+                        </div>
+                        <div className="grid-card-body">
+                            <div className="grid-card-iframe">
+                                <iframe
+                                    src={item.link}
+                                    title={item.title}
+                                    style={{ border: "none" }}
+                                    height="400px"
+                                    width="100%"
+                                    frameBorder="0"
+                                    scrolling="no"
+                                    loading="lazy"
+                                    allowtransparency="true"
+                                    allowFullScreen={true}></iframe>
+                            </div>
+                            <div className="grid-card-body-text">
+                                <h1 className="">{item.description}</h1>
+                            </div>
+                            {"technologies" in item && (
+                                // Get a cell list for the listed technologies used.
+                                <CellList
+                                    dataLabel={"Technologies used:"}
+                                    dataLabelSize={"2xl"}
+                                    dataList={item.technologies}
+                                    dataDisplayKey={"name"}
+                                    filteringEnabled={false}
+                                />
+                            )}
+                        </div>
+                        <div className="grid-card-footer items-end">
+                            <a href={item.link} className="button mt-2">
+                                See It Here
+                            </a>
+                        </div>
+                    </div>
+                );
+            });
+            // console.log(
+            //     "Projects.JS :: getProjects :: datamap = ",
+            //     datamap,
+            //     datamap.toString(),
+            // );
+            return [datamap];
+        }
+    };
+
+    /*
+    const getProjects = ( data ) =>
+    {
+        console.log(
+            "Projects.JS :: getProjects :: Data = ",
+            data,
+            portfolioData,
+        );
+        if ( isValidArray( data, true ) )
+        {
+            data.map((item) => (
+                <div
+                    className="grid-card text-white shadow "
+                    id={item._id === "" ? "" : item._id}>
+                    <div className="grid-card-header">
+                        <h1 className="text-xl font-bold">{item.title}</h1>
+                    </div>
+                    <div className="grid-card-body">
+                        <div className="grid-card-iframe">
+                            <iframe
+                                src={item.link}
+                                title={item.title}
+                                style={{ border: "none" }}
+                                height="400px"
+                                frameBorder="0"
+                                scrolling="no"
+                                loading="lazy"
+                                allowtransparency="true"
+                                allowFullScreen={true}></iframe>
+                        </div>
+                        <div className="grid-card-body-text">
+                            <h1 className="">{item.description}</h1>
+                        </div>
+                        Technologies used:{" "}
+                        <div className="cell-list">
+                            {item.technologies.map((technology) => (
+                                <div className="cell-list-item">
+                                    <h1 className="cell-list-item-text">
+                                        {technology}
+                                    </h1>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="grid-card-footer items-end">
+                        <a href={item.link} className="button mt-2">
+                            See It Here
+                        </a>
+                    </div>
+                </div>
+            ));
+        }
+    }
+*/
+
+    return (
+        <div>
+            <SectionTitle title="Projects"></SectionTitle>
+            <div className="py-5">
+                <h1 className="text-highlightColor text-2xl">
+                    Here are a few examples of my skills and the technologies
+                    i've been working with:
+                </h1>
+                {
+                    // getAllTechnologies( projects )
+                    <CellList
+                        dataListEnabled={false}
+                        dataLabel={"Click on a category to filter projects"}
+                        dataLabelSize={"1"}
+                        hoverPopupEnabled={false}
+                        progressDisplayEnabled={true}
+                        progressDisplayKey={""}
+                        filterOptionsList={technologyFilterOptions}
+                        filterActiveList={technologyFilter}
+                        filteringEnabled={true}
+                        dataFilterFunction={setTechnologyFilter}
+                    />
+                }
+            </div>
+            <div className="grid-card-container">{getProjects(projects)}</div>
+        </div>
+    );
+}
+
+export default Projects;
+
+/*
     // Accepts the technologies field from a specific project entry and returns a cell-list.
     const getTechnologies = (data) => {
         console.log(
@@ -67,11 +249,17 @@ function Projects() {
         if (has(data, "technologies")) {
             // Case of being given one project, as an object.
             return (
-                <div className="cell-list flex flex-wrap">
-                    {data.technologies.map((tech, techindex) => {
-                        return getTechnologyCell(data.index, tech, false);
-                    })}
-                </div>
+                <CellList
+                    dataLabel={"Technologies used:"}
+                    dataList={data.technologies}
+                    dataDisplayKey={"name"}
+                    filteringEnabled={false}
+                />
+                // <div className="cell-list flex flex-wrap">
+                //     {data.technologies.map((tech, techindex) => {
+                //         return getTechnologyCell(data.index, tech, false);
+                //     })}
+                // </div>
             );
         }
     };
@@ -136,7 +324,7 @@ function Projects() {
             data,
             portfolioData,
         );
-        if ( arrayIsValid( technologies ) )
+        if ( isValidArray( technologies ) )
         {
             return (
                 <div className="cell-list flex flex-wrap">
@@ -170,7 +358,7 @@ function Projects() {
 
     const getSkills = (data) => {
         console.log("Projects.JS :: getSkills :: Data = ", data, portfolioData);
-        if (arrayIsValid(data, true)) {
+        if (isValidArray(data, true)) {
             return (
                 <div className="cell-list flex flex-wrap gap-5 mt-5">
                     {data.map((item, index) => (
@@ -187,167 +375,8 @@ function Projects() {
         }
     };
 
-    const getProjects = (data) => {
-        // console.log(
-        //     "Projects.JS :: getProjects :: Data = ",
-        //     data,
-        //     portfolioData,
-        // );
-        if ( arrayIsValid( data, true ) )
-        {
-            let datamap = data.map((item, itemIndex) => {
-                // For each project
-                // console.log(
-                //     "Projects.JS :: getProjects :: mapping each project :: ",
-                //     item,
-                //     itemIndex,
-                // );
-                if ( technologyFilter.length > 0 )
-                {
-                    // Check if this project has any technologies listed in the filter list.
-                    if (has(item, "technologies")) {
-                        let techs = item.technologies;
-                        // Get a list of tech names.
-                        let technames = techs.map((tech) =>
-                            has(tech, "name") ? tech.name : "",
-                        );
-                        let match = false;
-                        technames.forEach( ( tech ) =>
-                        {
-                            if ( technologyFilter.includes( tech ) )
-                            {
-                                match = true;
-                            }
-                        } )
-                        if ( match === true )
-                        {
-                            return "";
-                        }
-                    }
-                }
-                // Else proceed like normal.
-                return (
-                    <div
-                        className="grid-card text-white shadow "
-                        id={item._id === "" ? "" : item._id}>
-                        <div className="grid-card-header">
-                            <h1 className="text-xl font-bold">{item.title}</h1>
-                        </div>
-                        <div className="grid-card-body">
-                            <div className="grid-card-iframe">
-                                <iframe
-                                    src={item.link}
-                                    title={item.title}
-                                    style={{ border: "none" }}
-                                    height="400px"
-                                    width="100%"
-                                    frameBorder="0"
-                                    scrolling="no"
-                                    loading="lazy"
-                                    allowtransparency="true"
-                                    allowFullScreen={true}></iframe>
-                            </div>
-                            <div className="grid-card-body-text">
-                                <h1 className="">{item.description}</h1>
-                            </div>
-                            {"technologies" in item && (
-                                <>
-                                    <h1 className="">Technologies used:</h1>
-                                    {getTechnologies(item)}
-                                </>
-                            )}
-                        </div>
-                        <div className="grid-card-footer items-end">
-                            <a href={item.link} className="button mt-2">
-                                See It Here
-                            </a>
-                        </div>
-                    </div>
-                );
-            });
-            // console.log(
-            //     "Projects.JS :: getProjects :: datamap = ",
-            //     datamap,
-            //     datamap.toString(),
-            // );
-            return [datamap];
-        }
-    };
-
-    /*
-    const getProjects = ( data ) =>
-    {
-        console.log(
-            "Projects.JS :: getProjects :: Data = ",
-            data,
-            portfolioData,
-        );
-        if ( arrayIsValid( data, true ) )
-        {
-            data.map((item) => (
-                <div
-                    className="grid-card text-white shadow "
-                    id={item._id === "" ? "" : item._id}>
-                    <div className="grid-card-header">
-                        <h1 className="text-xl font-bold">{item.title}</h1>
-                    </div>
-                    <div className="grid-card-body">
-                        <div className="grid-card-iframe">
-                            <iframe
-                                src={item.link}
-                                title={item.title}
-                                style={{ border: "none" }}
-                                height="400px"
-                                frameBorder="0"
-                                scrolling="no"
-                                loading="lazy"
-                                allowtransparency="true"
-                                allowFullScreen={true}></iframe>
-                        </div>
-                        <div className="grid-card-body-text">
-                            <h1 className="">{item.description}</h1>
-                        </div>
-                        Technologies used:{" "}
-                        <div className="cell-list">
-                            {item.technologies.map((technology) => (
-                                <div className="cell-list-item">
-                                    <h1 className="cell-list-item-text">
-                                        {technology}
-                                    </h1>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="grid-card-footer items-end">
-                        <a href={item.link} className="button mt-2">
-                            See It Here
-                        </a>
-                    </div>
-                </div>
-            ));
-        }
-    }
 */
 
-    return (
-        <div>
-            <SectionTitle title="Projects"></SectionTitle>
-            <div className="py-5">
-                <h1 className="text-highlightColor text-2xl">
-                    Here are a few examples of my skills and the technologies
-                    i've been working with:
-                </h1>
-                <h1 className="text-white">
-                    Click on a skill to filter projects
-                </h1>
-                {getAllTechnologies(projects)}
-            </div>
-            <div className="grid-card-container">{getProjects(projects)}</div>
-        </div>
-    );
-}
-
-export default Projects;
 
 /*
     const getAllTechnologies = ( data ) =>
@@ -357,7 +386,7 @@ export default Projects;
             data,
             portfolioData,
         );
-        if ( arrayIsValid( technologies ) )
+        if ( isValidArray( technologies ) )
         {
             // Case of being given all projects.
             // let techs = [];
